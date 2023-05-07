@@ -116,7 +116,6 @@
         }
 
         const initGame = (that, flag) => {
-            that.setState({ "output": "", "gameover": false });
             let ROWS = 6, COLS = 7;
             if (flag) {
                 that.rows = ROWS;
@@ -130,7 +129,9 @@
                 "squares": create2DArray(ROWS, COLS),
                 "nextColor": nextColor,
                 "colorA": colorA,
-                "colorB": colorB
+                "colorB": colorB,
+                "output": "",
+                "gameover": false
             };
             if (flag) {
                 that.state = obj;
@@ -143,10 +144,6 @@
             constructor(props) {
                 super(props);
                 initGame(this, true);
-            }
-
-            componentDidMount() {
-                this.setState({ "output": "", "gameover": false });
             }
 
             renderSquare(row, col) {
@@ -250,7 +247,7 @@
                     // do nothing;
                 }
                 if (gameOver) {
-                    this.setState({ "output": text });
+                    this.setState({ "output": text, "gameover": true });
                     return false;
                 }
                 return true;
@@ -263,9 +260,7 @@
                 if (dropped) {
                     addPieceToBoard(this.rows, row, col, currentColor, this);
                 }
-                if (!this.getGameState(this.state.squares)) {
-                    this.setState({ "gameover": true });
-                }
+                this.getGameState(this.state.squares);
             }
 
             startNewGame(e) {
