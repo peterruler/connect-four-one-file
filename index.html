@@ -47,28 +47,27 @@
                 if (type === 2) {
                     if ((colorA[i] >> col) & 1) {
                         squares[i][col] = type;
-                        that.setState({ squares: squares });
+                        that.setState({ "squares": squares });
                         return;
                     }
                 } else {
                     if ((colorB[i] >> col) & 1) {
                         squares[i][col] = type;
-                        that.setState({ squares: squares });
+                        that.setState({ "squares": squares });
                         return;
                     }
                 }
             }
         }
 
-        const dropPiece = (rows, col, type, that) => {
-            let nextColor = type;
+        const dropPiece = (rows, col, nextColor, that) => {
             let colorA = that.state.colorA;
             let colorB = that.state.colorB;
 
             for (let i = rows - 1; i >= 0; i -= 1) {
                 if (((colorA[i] | colorB[i]) & (1 << col)) === 0) {
-                    //type 1=b=red, 2=a=blue
-                    if (type === 2) {
+                    // nextColor / type 1=b=red, 2=a=blue
+                    if (nextColor === 2) {
                         colorA[i] |= (1 << col);
                         nextColor = 1;
                         that.setState({ nextColor: nextColor })
@@ -89,9 +88,7 @@
                 let type = this.props.squares[this.props.row][this.props.col];
                 let colorClassName = (type === 2) ? 'color-a' : (type === 1) ? 'color-b' : '';
                 return (
-                    <div className="field"
-                        onClick={(e) => this.props.onClick(e)}
-                    >
+                    <div className="field" onClick={(e) => this.props.onClick(e)}>
                         <div className={"piece " + colorClassName}></div>
                     </div>
                 );
@@ -101,11 +98,9 @@
         class Button extends Component {
             render() {
                 return (
-                    <p>
-                        <button className="btn"
-                            onClick={(e) => this.props.onClick(e)}
-                        >{this.props.children}</button>
-                    </p>
+                    <div>
+                        <button className="btn" onClick={(e) => this.props.onClick(e)}>{this.props.children}</button>
+                    </div>
                 );
             }
         }
@@ -113,28 +108,29 @@
         class Footer extends Component {
             render() {
                 return (
-                    <p class="footer">
-                        Peter Strössler - © {new Date().getFullYear()},
-                        all rights reserved.
-                    </p>
+                    <div class="footer">
+                        Peter Strössler - © {new Date().getFullYear()},all rights reserved.
+                    </div>
                 );
             }
         }
 
         const initGame = (that, flag) => {
+            that.setState({ "output": "", "gameover": false });
             let ROWS = 6, COLS = 7;
             if (flag) {
                 that.rows = ROWS;
             }
             let colorA = [], colorB = [];
             [colorA, colorB] = initBoard(ROWS, COLS);
-            //type 1=b=red, 2=a=blue
+            
+            // nextColor / type 1=b=red, 2=a=blue
             let nextColor = 2;
             let obj = {
-                squares: create2DArray(ROWS, COLS),
-                nextColor: nextColor,
-                colorA: colorA,
-                colorB: colorB
+                "squares": create2DArray(ROWS, COLS),
+                "nextColor": nextColor,
+                "colorA": colorA,
+                "colorB": colorB
             };
             if (flag) {
                 that.state = obj;
@@ -273,7 +269,6 @@
             }
 
             startNewGame(e) {
-                this.setState({ "output": "", "gameover": false });
                 initGame(this, false);
             }
 
@@ -329,12 +324,8 @@
                             {this.renderSquare(5, 5)}
                             {this.renderSquare(5, 6)}
                         </div>
-                        <p>
-                            {this.renderButton("Neues Spiel")}
-                        </p>
-                        <p>
-                            {this.state.output}
-                        </p>
+                        {this.renderButton("Neues Spiel")}
+                        {this.state.output}
                     </div>
                 );
             }
